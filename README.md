@@ -22,10 +22,10 @@ cmd /c mklink /J "%USERPROFILE%\.dsh\profiles\desktop\node_modules\dsh-select-di
 # 4. 重启 DSH
 ```
 
-装了全局 `dsh` CLI 的话，第 2–3 步可换成一条命令：
+装了全局 `dsh` CLI 的话，第 2–3 步可以换成一条命令（源形式以该 CLI 版本文档为准）：
 
 ```powershell
-dsh plugin --profile desktop add github:kshixiang/dsh-select-dict
+dsh plugin --profile desktop add D:\tools\dsh-select-dict
 ```
 
 本插件没有构建产物（客户端就是可直接运行的 CJS 包装），所以 clone 完即可用，不需要 `pnpm install` / 打包。

@@ -1,0 +1,4 @@
+# dsh-select-dict bundle patch: 把本插件的宿主入口插进加载树。
+- insert:
+    - id: select-dict
+      name: 'dsh-select-dict'

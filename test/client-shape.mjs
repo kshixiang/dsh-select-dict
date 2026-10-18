@@ -28,4 +28,22 @@ if (!Array.isArray(exportsObj.inject)) throw new Error('工厂必须导出 injec
 if (exportsObj.inject.length !== 0) throw new Error('本插件不依赖客户端服务')
 if (typeof exportsObj.name !== 'string') throw new Error('工厂必须导出 name')
 
+// ---- 语言判定（「只翻译某种语言」用的就是它）----
+const detectLanguage = exportsObj.__internal && exportsObj.__internal.detectLanguage
+if (typeof detectLanguage !== 'function') throw new Error('缺少 __internal.detectLanguage')
+const cases = [
+  ['quant', 'en'],
+  ['Hello world', 'en'],
+  ['量化分析师', 'zh'],
+  ['こんにちは', 'ja'],
+  ['안녕하세요', 'ko'],
+  ['こんにちは世界', 'ja'],
+  ['12345 !!!', 'other'],
+  ['', 'other'],
+]
+for (const [input, expected] of cases) {
+  const actual = detectLanguage(input)
+  if (actual !== expected) throw new Error('detectLanguage(' + JSON.stringify(input) + ') 应为 ' + expected + '，实际 ' + actual)
+}
+
 console.log('CLIENT SHAPE OK', JSON.stringify({ id: registration.id, name: exportsObj.name, inject: exportsObj.inject }))

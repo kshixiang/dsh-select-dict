@@ -34,13 +34,26 @@ dsh plugin --profile desktop add D:\tools\dsh-select-dict
 
 1. 在任意界面用鼠标选中一个词/短语/一句话（最多 500 字符）。
 2. 选区下方弹出小卡片：先显示「翻译中…」，随后显示译文。
-3. 译文一出来就自动存进本机词本，卡片右下角会提示「已存入词本 ✓」。
+3. 默认译文一出来就自动存进本机词本，卡片右下角提示「已存入词本 ✓」；把收词方式改成手动后，改为点卡片上的「＋ 词本」才收录。
 4. 卡片底部的「🔊 原词」「🔊 译文」用系统语音朗读；中文用 zh-CN、英文用 en-US。
 5. 右下角「📒 词本」按钮打开词本：可搜索、朗读、删除单条、清空；同一词条按出现次数累加。
+6. 右下角「⚙」打开设置（见下一节）。
+
+## 设置
+
+点右下角「⚙」，改动即时保存（落本机，重启后仍在）：
+
+| 设置项 | 可选值 | 说明 |
+| --- | --- | --- |
+| 只翻译哪种语言 | 任意语言 / 仅英文 / 仅中文 / 仅日文 / 仅韩文 | 选中的文字不属于该语言时**完全不弹卡片**，避免在中文界面里误触 |
+| 收词方式 | 自动存入词本 / 手动点击加入 | 手动模式下卡片多出「＋ 词本」按钮，点了才写入词本 |
+
+语言判定按字符集做：含假名 → 日文；含谚文 → 韩文；含汉字 → 中文；含拉丁字母 → 英文；其余 → 不触发。
 
 ## 数据落盘
 
 - 词本：`%USERPROFILE%\.dsh\select-dict\words.json`（可用环境变量 `DSH_SELECT_DICT_DIR` 改目录）
+- 设置：同目录 `settings.json`
 - 模型路由：默认用 DSH 当前的默认模型；也可用 `DSH_SELECT_DICT_PROVIDER` / `DSH_SELECT_DICT_MODEL` 指定。
 
 ## 实现要点
@@ -52,6 +65,8 @@ dsh plugin --profile desktop add D:\tools\dsh-select-dict
   - `GET  /select-dict/words` → `{ ok, words: [...] }`
   - `POST /select-dict/words` `{ text, translation }` → `{ ok, word }`（按 text 去重，`count` 累加）
   - `POST /select-dict/words/delete` `{ id }`、`POST /select-dict/words/clear`
+  - `GET  /select-dict/settings` → `{ ok, settings: { triggerLanguage, autoSave } }`
+  - `POST /select-dict/settings` `{ triggerLanguage?, autoSave? }` → 合并保存，非法值忽略
 
 ## 卸载
 

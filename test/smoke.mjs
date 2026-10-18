@@ -100,6 +100,34 @@ if (tooLong.status !== 400) throw new Error('超长文本应当被拒绝')
 const missing = await call('GET', '/select-dict/nope')
 if (missing.status !== 404) throw new Error('未知接口应当 404')
 
+// ---- 设置：默认值、局部更新、非法值回落、落盘 ----
+const defaults = await call('GET', '/select-dict/settings')
+if (defaults.status !== 200) throw new Error('读设置失败')
+if (defaults.body.settings.triggerLanguage !== 'any' || defaults.body.settings.autoSave !== true) {
+  throw new Error('默认设置不对：' + JSON.stringify(defaults.body.settings))
+}
+
+const toEnglish = await call('POST', '/select-dict/settings', { triggerLanguage: 'en' })
+if (toEnglish.body.settings.triggerLanguage !== 'en' || toEnglish.body.settings.autoSave !== true) {
+  throw new Error('只改语言时不该动 autoSave：' + JSON.stringify(toEnglish.body.settings))
+}
+
+const toManual = await call('POST', '/select-dict/settings', { autoSave: false })
+if (toManual.body.settings.triggerLanguage !== 'en' || toManual.body.settings.autoSave !== false) {
+  throw new Error('只改收词方式时不该动语言：' + JSON.stringify(toManual.body.settings))
+}
+
+const rejected = await call('POST', '/select-dict/settings', { triggerLanguage: 'klingon' })
+if (rejected.body.settings.triggerLanguage !== 'en') throw new Error('非法语言应当被忽略')
+
+const settingsOnDisk = JSON.parse(await readFile(join(dir, 'settings.json'), 'utf8'))
+if (settingsOnDisk.triggerLanguage !== 'en' || settingsOnDisk.autoSave !== false) {
+  throw new Error('设置落盘内容不对：' + JSON.stringify(settingsOnDisk))
+}
+
+const reread = await call('GET', '/select-dict/settings')
+if (reread.body.settings.autoSave !== false) throw new Error('设置应当跨请求持久')
+
 for (const off of disposers) off()
 await rm(dir, { recursive: true, force: true })
 console.log('SMOKE OK')

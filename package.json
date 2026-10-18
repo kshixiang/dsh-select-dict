@@ -1,6 +1,6 @@
 {
   "name": "dsh-select-dict",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "划词翻译 + 发音 + 本机词本：DSH 桌面端最精简的选词翻译插件",
   "type": "module",
   "main": "lib/index.js",

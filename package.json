@@ -27,5 +27,21 @@
   "engines": {
     "node": "^22.0.0 || >=24"
   },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "translate",
+    "dictionary",
+    "selection",
+    "tts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kshixiang/dsh-select-dict.git"
+  },
+  "homepage": "https://github.com/kshixiang/dsh-select-dict#readme",
+  "bugs": {
+    "url": "https://github.com/kshixiang/dsh-select-dict/issues"
+  },
   "license": "MIT"
 }

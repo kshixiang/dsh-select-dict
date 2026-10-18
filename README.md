@@ -4,6 +4,32 @@ DSH 桌面端最精简的「划词翻译」插件：选中文字 → 浮窗译�
 
 只做这三件事，没有记忆卡、考试、导出之类的附属功能。
 
+## 安装
+
+仓库：<https://github.com/kshixiang/dsh-select-dict>
+
+```powershell
+# 1. 取代码（放在任何你喜欢的目录）
+git clone https://github.com/kshixiang/dsh-select-dict.git D:\tools\dsh-select-dict
+
+# 2. 让 profile 认得它：在 ~/.dsh/profiles/desktop/package.json 里加两处
+#    dependencies: "dsh-select-dict": "link:D:\\tools\\dsh-select-dict"
+#    dsh.profile.bundles: [ ..., "dsh-select-dict" ]
+
+# 3. 把包目录接到 node_modules（Windows junction，等价于 pnpm 的 link）
+cmd /c mklink /J "%USERPROFILE%\.dsh\profiles\desktop\node_modules\dsh-select-dict" "D:\tools\dsh-select-dict"
+
+# 4. 重启 DSH
+```
+
+装了全局 `dsh` CLI 的话，第 2–3 步可换成一条命令：
+
+```powershell
+dsh plugin --profile desktop add github:kshixiang/dsh-select-dict
+```
+
+本插件没有构建产物（客户端就是可直接运行的 CJS 包装），所以 clone 完即可用，不需要 `pnpm install` / 打包。
+
 ## 用法
 
 1. 在任意界面用鼠标选中一个词/短语/一句话（最多 500 字符）。
@@ -27,19 +53,13 @@ DSH 桌面端最精简的「划词翻译」插件：选中文字 → 浮窗译�
   - `POST /select-dict/words` `{ text, translation }` → `{ ok, word }`（按 text 去重，`count` 累加）
   - `POST /select-dict/words/delete` `{ id }`、`POST /select-dict/words/clear`
 
-## 安装 / 卸载
+## 卸载
 
-安装（把仓库目录挂进 profile）：
+从 `~/.dsh/profiles/desktop/package.json` 的 `dependencies` 与 `dsh.profile.bundles` 里删掉 `dsh-select-dict`，删除 `node_modules\dsh-select-dict`，重启 DSH。词本文件不会被删（`%USERPROFILE%\.dsh\select-dict\words.json`），需要的话手动删。
 
-```jsonc
-// ~/.dsh/profiles/desktop/package.json
-"dependencies": { "dsh-select-dict": "link:D:\\carl\\project\\ai_study\\dsh-select-dict" }
-"dsh": { "profile": { "bundles": [ ..., "dsh-select-dict" ] } }
-```
+## 许可
 
-再让 `node_modules/dsh-select-dict` 指向本目录（junction 或 `pnpm install`），重启 DSH。
-
-卸载：从 `dependencies` 与 `dsh.profile.bundles` 里删掉 `dsh-select-dict`，删除 `node_modules/dsh-select-dict`，重启 DSH。
+MIT，见 [LICENSE](LICENSE)。
 
 ## 测试
 
